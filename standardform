@@ -18,3 +18,24 @@ combinetab=array2table(combine);
 combinetab.Properties.VariableNames(1:size(combine,2))={'x1','x2','s1','s2','b'}
  
 
+ANS
+
+objFunc =
+
+  1×4 table
+
+    x1    x2    s1    s2
+    __    __    __    __
+
+    1     2     0     0 
+
+
+combinetab =
+
+  2×5 table
+
+    x1    x2    s1    s2    b
+    __    __    __    __    _
+
+    -1    1     1      0    1
+     1    1     0     -1    2
