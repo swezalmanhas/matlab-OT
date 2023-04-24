@@ -1,0 +1,432 @@
+% % % format short
+% clear all
+% % input 1: input parameter
+% c=[1 2 0 0];
+% A=[-1 1 1 0 ; 1 1 0 1];
+% b=[1;2];
+% % phase2: no of constraint & variable
+% m=size(A,1);           % no of constraint 
+% n=size(A,2);            % no of variable
+% 
+% 
+% % phase 3: computw th ncm bfs
+% nv=nchoosek(n,m);
+% t=nchoosek(1:n,m);
+% sol=[];
+% for i=1:nv
+%     y=zeros(n,1);
+%     x=A(:,t(i,:))\b;
+%     y(t(i,:))=x;
+%     sol=[sol y];
+% end
+% sol
+
+
+% 
+% 
+% clc
+% close all
+% a=[1,2;1,1;0,1;1,0;0,1];
+% b=[200;1500;600;0;0];
+% c=[2,3];
+% x1=0:1:max(b);
+% x21=(b(1)-a(1,1)*x1)/a(1,2);
+% x22=(b(2)-a(2,1)*x1)/a(2,2);
+% x23=(b(3)-a(3,1)*x1)/a(3,2);
+% x21=max(0,x21);
+% x22=max(0,x22);
+% x23=max(0,x23);
+% 
+% plot(x1,x21,'red',x1,x22,'blue',x1,x23,'green');
+% xlabel('xvalues')
+% ylabel('yvalues')
+% title('graph')
+% legend('x1+2*x2<=200','x1+x2<=1500','x2<=600');
+% 
+% 
+% % point of intersection
+% HG=[];
+% for i=1:length(a)
+%     hg1=a(i,:);
+%     b1=b(i);
+%     for j=i+1:length(a)
+%         hg2=a(j,:);
+%         b2=b(j);
+%         aa=[hg1;hg2];
+%         bb=[b1;b2];
+%         xx=aa\bb;
+%         HG =[HG xx];
+%     end
+% end
+% HG
+% x1=HG(1,:);
+% x2=HG(2,:);
+% y1=find(x1+2*x2>200);
+% HG(:,y1)=[];
+% 
+% x1=HG(1,:);
+% x2=HG(2,:);
+% y2=find(x1+x2>1500);
+% HG(:,y2)=[];
+% 
+% x1=HG(1,:);
+% x2=HG(2,:);
+% y3=find(x2>600);
+% HG(:,y3)=[];
+% 
+% x1=HG(1,:);
+% x2=HG(2,:);
+% y4=find(x1<0);
+% HG(:,y4)=[];
+% 
+% x1=HG(1,:);
+% x2=HG(2,:);
+% y5=find(x2<0);
+% HG(:,y5)=[];
+% 
+% x1=HG(1,:);
+% x2=HG(2,:);
+% x1
+% x2
+% 
+% HG=HG'; % tranpose of matrix
+% for i=1:length(HG)
+%     obj(i,:)=sum(HG(i,:).*c);
+% end
+% [p,loc]=max(obj);
+% fprintf('the optimal value is %f\n',p);
+% fprintf('the optimal solution is');
+% disp(HG(loc,:));
+% 
+% 
+% 
+
+%standard form 
+% a=[-1 1;1 1];
+% b=[1;2];
+% c=[1 2];
+% 
+% 
+% 
+% y=zeros(1,size(a,1));
+% C=[c y];
+% 
+% objFunc=array2table(C);
+% objFunc.Properties.VariableNames(1:size(C,2))={'x1','x2','s1','s2'}
+% 
+% s=eye(size(a,1));
+% ineq=[0 1];
+% y=find(ineq==1);
+% s(y,:)=-s(y,:);
+% 
+% combine=[a s b];
+% combinetab=array2table(combine);
+% combinetab.Properties.VariableNames(1:size(combinetab,2))={'x1','x2','s1','s2','b'}
+
+
+
+% Q4.simplex method 
+% 
+% C=[2 5];
+% A=[1,4;3,1;1,1];
+% b=[24;21;9];
+% [m,n]=size(A);
+% s=eye(m);
+% A=[A s b];
+% cost=zeros(1,n+m+1);
+% cost(1:n)=C;
+% bv=n+1:1:n+m;
+% zjcj=cost(bv)*A-cost;
+% zcj=[zjcj;A];
+% simpletable=array2table(zcj);
+% simpletable.Properties.VariableNames(1:size(A,2))={'x1','x2','s1','s2','s3','b'};
+% flag=true;
+% ratio=[];
+% while flag
+%     if any(zjcj<0)
+%         fprintf('curr not optimal');
+%         zc=zjcj(1:end-1);
+%         [Enter_val,pvt_col]=min(zc);
+%     if all(A(:,pvt_col)<=0)
+%         error('lpp unbounded all entries <=0 in col %d',pvt_col);
+%     else
+%         sol=A(:,end);
+%         col=A(:,pvt_col);
+%         for i=1:m
+%             if col(i)>0
+%                 ratio(i)=sol(i)./col(i);
+%             else
+%                 ratio(i)=inf;
+%             end
+%         end
+%         [leaving_val,pvt_row]=min(ratio);
+%     end
+%     bv(pvt_row)=pvt_col;
+%     pvt_key=A(pvt_row,pvt_col);
+%     A(pvt_row,:)=A(pvt_row,:)./pvt_key;
+%     for i=1:m
+%         if i~=pvt_row
+%             A(i,:)=A(i,:)-A(i,pvt_col).*A(pvt_row,:);
+%         end
+%     end
+% zjcj=zjcj-zjcj(pvt_col).*A(pvt_row,:);
+% zcj=[zjcj;A];
+% table=array2table(zcj);
+% table.Properties.VariableNames={'x1','x2','s1','s2','s3','sol'}
+% else 
+%         flag=false;
+%  end
+% end
+
+
+% Q4 big M
+
+% clc;
+% 
+% cost= [3 2 0 0 -1000 0];
+% a = [1 1 ; 1 3 ;1 -1];
+% b = [2;3;1];
+% 
+% [m,n] = size(a);
+% s = eye(m);
+% A = [a s b];
+% 
+% bv = n+1:1:n+m;
+% 
+% zjcj = cost(bv)*A - cost;
+% zcj = [zjcj; A];
+% 
+% simplexTable=array2table(zcj);
+% simplexTable.Properties.VariableNames(1:size(zcj,2))={'x1','x2','s1','s2','a1','Sol'}
+% 
+% flag=true;
+% ratio=[];
+% 
+% while flag
+%     if any(zjcj<0)
+%         fprintf("The Current BFS is not Optimal \n");
+%         zc = zjcj(1:end-1);
+%          [Enter_val, pvt_col] = min(zc);
+%     if all (A(:,pvt_col)<=0)
+%         error("LPP is Unbounded all entries are <=0 in column %d",pvt_col);
+%     else
+%         sol = A(:,end)
+%         column = A(:,pvt_col)
+%         for i = 1:m
+%             if column(i) > 0
+%                 ratio(i) = sol(i)./column(i);
+%             else
+%                 ratio(i) = inf;
+%             end
+%         end
+%         [leaving_val, pvt_row] = min(ratio);
+%     end
+% 
+%     bv(pvt_row) = pvt_col;
+%     pvt_key = A(pvt_row, pvt_col);
+% 
+%     A(pvt_row,:) = A(pvt_row,:)./pvt_key;
+% 
+%     for i = 1:m
+%         if (i~=pvt_row)
+%             A(i,:) = A(i,:) - A(i, pvt_col).*A(pvt_row,:);
+%         end
+%     end
+% 
+%     zjcj = zjcj - zjcj(pvt_col).*A(pvt_row,:);
+%     zcj = [zjcj;A];
+% 
+%     table = array2table(zcj);
+% 
+%     table.Properties.VariableNames(1:n+m+1) = {'x1','x2','s1','s2','a1','Sol'}
+% 
+%     else
+%         flag = false;
+%         fprintf("The Current BFS is Optimal \n")
+%     end
+% end
+
+
+
+
+
+
+
+% Q5 two phase method
+
+% Variables={'x_1','x_2','x_3','s_1','s_2','A_1','A_2','Sol'};
+% OptVariables={'x_1','x_2','x_3','s_1','s_2','Sol'};
+% C=[-7.5 3 0 0 0 -1 -1 0];
+% A=[3 -1 -1 -1 0 1 0 3; 1 -1 1 0 -1 0 1 2];
+% BV=[6 7];
+% D=[0 0 0 0 0 -1 -1 0]; 
+% StartBV=find(D<0);  
+% fprintf('Phase 1\n');
+% [BFS,A]=simp(A,BV,D,Variables);
+% fprintf('Phase 2\n');
+% A(:,StartBV)=[];  
+% C(:,StartBV)=[]; 
+% [OptBFS,OptA]=simp(A,BFS,C,OptVariables);
+% FINAL_BFS=zeros(1,size(A,2));
+% FINAL_BFS(OptBFS)=OptA(:,end);
+% FINAL_BFS(end)=sum(FINAL_BFS.*C);
+% OptimalBFS=array2table(FINAL_BFS);
+% OptimalBFS.Properties.VariableNames(1:size(OptimalBFS,2))=OptVariables
+% 
+% 
+% function [BFS,A]=simp(A,BV,D,Variables)
+%     ZjCj=D(BV)*A-D;
+%     RUN=true;
+% while RUN
+%   ZC=ZjCj(1:end-1);
+% if any(ZC<0) 
+%     fprintf(' The Current BFS is NOT Optimal \n\n')
+%     [entcol, pvt_col]=min(ZC);
+%     fprintf('Entering Col=%d \n',pvt_col) ;
+%     sol=A(:,end);
+%     Column=A(:,pvt_col);
+%     if Column<0 
+%         fprintf('Unbounded Solution\n');
+%     else
+%         for i=1:size(A,1)
+%             if Column(i)>0
+%                 ratio(i)=sol(i)./Column(i);
+%             else
+%                 ratio(i)=inf;
+%             end
+%         end
+%         [MinRatio, pvt_row]=min(ratio);
+%         fprintf('Leaving Row =%d \n',pvt_row)
+%         
+%     end
+%     BV(pvt_row)=pvt_col;
+%     pvt_key=A(pvt_row,pvt_col);
+%      A(pvt_row,:)=A(pvt_row,:)./pvt_key;
+%      for i=1:size(A,1)
+%          if i~=pvt_row
+%              A(i,:)=A(i,:)-A(i,pvt_col).*A(pvt_row,:);
+%          end
+%      end
+%     ZjCj=ZjCj-ZjCj(1,pvt_col).*A(pvt_row,:);
+%     ZCj=[ZjCj;A];
+%     TABLE=array2table(ZCj);
+%     TABLE.Properties.VariableNames(1:size(ZCj,2))=Variables
+%     
+%     BFS(BV)=A(:,end);
+% else RUN=false;
+%     fprintf('Current BFS is Optimal\n');
+%     fprintf('Phase 1 END\n\n\n');
+%     BFS=BV;
+% end
+% end
+% end
+
+% Q5 least cost method
+
+% cost=[2 7 4;3 3 1;5 5 4;1 6 2];
+% a=[5 8 7 14]; %supplies
+% b=[7 9 18]; % demand
+% % check balanced or unbalanced
+% if sum(a)==sum(b)
+%     fprintf('Balanced\n');
+% else
+%     fprintf('Unbalanced');
+%     if sum(a)<sum(b)
+%         cost(end+1,:)=zeros(1,size(a,2));
+%     elseif sum(b)<sum(a)
+%         cost(:,end+1)=zeros(1,size(a,2));
+%     end
+% end
+% icost=cost;
+% x=zeros(size(cost));
+% [m,n]=size(cost);
+% bfs=m+n-1;
+% for i=1:size(cost,1)
+%     for j=1:size(cost,2)
+% hh=min(cost(:)); %minimum cost
+% [row_index,col_index]=find(hh==cost); % cell with min cost
+% x11=min(a(row_index),b(col_index));
+% [val,ind]=max(x11); % finding max allocation
+% ii=row_index(ind); % row position
+% jj=col_index(ind); % col position
+% y11=min(a(ii),b(jj)); % find the value
+% x(ii,jj)=y11; % assign allocation
+% a(ii)=a(ii)-y11; % reduce row value
+% b(jj)=b(jj)-y11; % reduce column value
+% cost(ii,jj)=inf; % cell visited
+%     end
+% end
+% %print bfs
+% fprintf('Initial BFS= \n');
+% ib=array2table(x);
+% disp(ib)
+% totalbfs=length(nonzeros(x));
+% if totalbfs==bfs
+%     fprintf('Non Degenerate BFS \n');
+% else
+%     fprintf('Degenerate BFS \n');
+% end
+% initialcost=sum(sum(icost.*x));
+% fprintf('Cost= %d\n',initialcost);
+
+Z=[-2 0 -1]; %Enter cost
+A=[-1 -1 1;-1 2 -4]; %Enter coefficient matrix
+b=[-5;-8]; %Enter rhs column vector
+variables=["x1","x2","x3","s1","s2","Sol"];
+s=eye(size(A,1));
+Z=[Z zeros(1,size(b,1)) 0];
+A=[A s b]; 
+BV=[];
+% finding starting bfs
+for j=1:size(s,2)
+    for i=1:size(A,2) 
+        if A(:,i)==s(:,j) %checking identity matrix
+            BV=[BV i]; %preserving location of identity
+        end
+    end
+end
+fprintf("Basic Variables:\n");
+disp(variables(BV));
+run=true;
+% dual simplex start
+while run
+%     compute zjcj value of table
+    ZjCj=Z(BV)*A-Z;
+    table=[ZjCj;A];
+%     print the table
+    simplexTable=array2table(table);
+    simplexTable.Properties.VariableNames(1:size(simplexTable,2))=variables;
+    disp(simplexTable);
+    if any(A(:,end)<0) %any value in sol column is negative
+        fprintf("Infeasible BFS.\n");
+%          finding leaving variable
+        [leavingVal,pivotRow]=min(A(:,end));
+        fprintf("Leaving Row=%d \n",pivotRow);
+%          find entering variable
+        Row=A(pivotRow,1:end-1);
+        Zrow=ZjCj(:,1:end-1);
+        for i=1:size(Row,2)
+            if Row(i)<0
+                ratio(i)=abs(Zrow(i)./Row(i)); %finding ratio of zjcj and leaving row
+            else
+                ratio(i)=inf;
+            end
+        end
+        [minRatio,pivotCol]=min(ratio); %finding minimum ratio
+        BV(pivotRow)=pivotCol; %finding pivot column and update basic variable
+        fprintf("New Basic Variables:\n");
+        disp(variables(BV));
+        pivotVal=A(pivotRow,pivotCol); %finding pivot cell
+        A(pivotRow,:)=A(pivotRow,:)./pivotVal;
+
+        for i=1:size(A,1)
+            if i~=pivotRow
+                A(i,:)=A(i,:)-A(i,pivotCol).*A(pivotRow,:);
+            end
+            ZjCj=ZjCj-ZjCj(pivotCol).*A(pivotRow,:);
+        end
+    else
+        run=false;
+        fprintf("Feasible BFS.\n");
+    end
+end
